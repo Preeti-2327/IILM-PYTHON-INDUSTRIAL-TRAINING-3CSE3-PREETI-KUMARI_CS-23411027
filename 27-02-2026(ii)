@@ -1,0 +1,24 @@
+class Solution(object):
+    def nextGreaterElements(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[int]
+        """
+        n = len(nums)
+        result = [-1] * n
+        stack = []   # will store indices
+        
+        # Traverse twice to simulate circular array
+        for i in range(2 * n):
+            current = nums[i % n]
+            
+            # If current element is greater than stack top element
+            while stack and nums[stack[-1]] < current:
+                index = stack.pop()
+                result[index] = current
+            
+            # Only push indices during first pass
+            if i < n:
+                stack.append(i)
+        
+        return result

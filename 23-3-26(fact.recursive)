@@ -1,0 +1,7 @@
+def fact(n):
+    if n == 0:
+        return 1
+    small = fact(n-1)
+    return small * n
+n = int(input("enter a number"))
+print(fact(n))

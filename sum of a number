@@ -1,0 +1,7 @@
+def sum_array(arr):
+    if len(arr)==1:
+        return arr[0]
+    small_ans = sum_array(arr[1:])
+    return small_ans + arr[0]
+arr = [1, 2, 3, 4, 5]
+print(sum_array(arr))

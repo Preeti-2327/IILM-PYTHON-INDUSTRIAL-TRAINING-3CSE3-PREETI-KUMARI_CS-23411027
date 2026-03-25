@@ -1,0 +1,9 @@
+def find_number(arr, x):
+    if len(arr) == 0:
+        return False    
+    small_ans = find_number(arr[1:], x)     
+    if arr[0] == x:
+        return True   
+    return small_ans
+arr = [1, 2, 3, 4, 5]
+print(find_number(arr, 6))

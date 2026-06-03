@@ -1,0 +1,78 @@
+from bisect import bisect_right
+
+class Solution(object):
+    def earliestFinishTime(self, landStartTime, landDuration,
+                           waterStartTime, waterDuration):
+        """
+        :type landStartTime: List[int]
+        :type landDuration: List[int]
+        :type waterStartTime: List[int]
+        :type waterDuration: List[int]
+        :rtype: int
+        """
+
+        def build(start, dur):
+            rides = sorted(zip(start, dur))
+            s = [x[0] for x in rides]
+            d = [x[1] for x in rides]
+            n = len(rides)
+
+            # prefix minimum duration
+            pref_min_d = [0] * n
+            pref_min_d[0] = d[0]
+            for i in range(1, n):
+                pref_min_d[i] = min(pref_min_d[i - 1], d[i])
+
+            # suffix minimum of (start + duration)
+            suff_min_sd = [0] * n
+            suff_min_sd[-1] = s[-1] + d[-1]
+            for i in range(n - 2, -1, -1):
+                suff_min_sd[i] = min(suff_min_sd[i + 1], s[i] + d[i])
+
+            return s, pref_min_d, suff_min_sd
+
+        def query(t, starts, pref_min_d, suff_min_sd):
+            n = len(starts)
+            ans = float('inf')
+
+            # rides with start <= t
+            idx = bisect_right(starts, t) - 1
+            if idx >= 0:
+                ans = min(ans, t + pref_min_d[idx])
+
+            # rides with start > t
+            idx = bisect_right(starts, t)
+            if idx < n:
+                ans = min(ans, suff_min_sd[idx])
+
+            return ans
+
+        # Preprocess water rides (for Land -> Water)
+        w_starts, w_pref_d, w_suff_sd = build(
+            waterStartTime, waterDuration
+        )
+
+        # Preprocess land rides (for Water -> Land)
+        l_starts, l_pref_d, l_suff_sd = build(
+            landStartTime, landDuration
+        )
+
+        ans = float('inf')
+
+        # Land -> Water
+        for s, d in zip(landStartTime, landDuration):
+            finish_land = s + d
+            ans = min(
+                ans,
+                query(finish_land, w_starts, w_pref_d, w_suff_sd)
+            )
+
+        # Water -> Land
+        for s, d in zip(waterStartTime, waterDuration):
+            finish_water = s + d
+            ans = min(
+                ans,
+                query(finish_water, l_starts, l_pref_d, l_suff_sd)
+            )
+
+        return ans

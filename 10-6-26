@@ -1,0 +1,14 @@
+class Solution(object):
+    def maxTotalValue(self, nums, k):
+        vals = []
+        n = len(nums)
+
+        for i in range(n):
+            mx = mn = nums[i]
+            for j in range(i, n):
+                mx = max(mx, nums[j])
+                mn = min(mn, nums[j])
+                vals.append(mx - mn)
+
+        vals.sort(reverse=True)
+        return sum(vals[:k])

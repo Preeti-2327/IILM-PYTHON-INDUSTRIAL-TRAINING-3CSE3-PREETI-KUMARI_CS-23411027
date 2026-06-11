@@ -1,0 +1,16 @@
+class Solution(object):
+    def wiggleSort(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: None Do not return anything, modify nums in-place instead.
+        """
+        arr = sorted(nums)
+        n = len(nums)
+
+        mid = (n + 1) // 2
+
+        left = arr[:mid][::-1]
+        right = arr[mid:][::-1]
+
+        nums[::2] = left
+        nums[1::2] = right

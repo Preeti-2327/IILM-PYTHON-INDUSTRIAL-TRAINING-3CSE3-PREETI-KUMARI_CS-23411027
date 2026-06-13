@@ -1,0 +1,18 @@
+class Solution(object):
+    def transformWords(self, words, weights):
+        """
+        :type words: List[str]
+        :type weights: List[int]
+        :rtype: str
+        """
+        result = []
+
+        for word in words:
+            total = 0
+            for ch in word:
+                total += weights[ord(ch) - ord('a')]
+
+            rem = total % 26
+            result.append(chr(ord('z') - rem))
+
+        return ''.join(result)

@@ -1,0 +1,26 @@
+class Solution(object):
+    def maxEnvelopes(self, envelopes):
+        """
+        :type envelopes: List[List[int]]
+        :rtype: int
+        """
+        if not envelopes:
+            return 0
+
+        # Sort by width ascending, height descending
+        envelopes.sort(key=lambda x: (x[0], -x[1]))
+
+        # Longest Increasing Subsequence on heights
+        heights = [h for _, h in envelopes]
+
+        import bisect
+        lis = []
+
+        for h in heights:
+            idx = bisect.bisect_left(lis, h)
+            if idx == len(lis):
+                lis.append(h)
+            else:
+                lis[idx] = h
+
+        return len(lis)

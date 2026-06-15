@@ -1,0 +1,52 @@
+from bisect import bisect_left, insort
+
+class Solution(object):
+    def maxSumSubmatrix(self, matrix, k):
+        """
+        :type matrix: List[List[int]]
+        :type k: int
+        :rtype: int
+        """
+        m, n = len(matrix), len(matrix[0])
+
+        # Optimize: iterate over smaller dimension
+        if m < n:
+            rows, cols = m, n
+            mat = matrix
+        else:
+            rows, cols = n, m
+            mat = [list(row) for row in zip(*matrix)]
+
+        ans = float('-inf')
+
+        for left in range(rows):
+            sums = [0] * cols
+
+            for right in range(left, rows):
+                for c in range(cols):
+                    sums[c] += mat[right][c]
+
+                prefix = 0
+                prefix_sums = [0]
+
+                cur_best = float('-inf')
+
+                for x in sums:
+                    prefix += x
+
+                    idx = bisect_left(prefix_sums, prefix - k)
+
+                    if idx < len(prefix_sums):
+                        cur_best = max(
+                            cur_best,
+                            prefix - prefix_sums[idx]
+                        )
+
+                    insort(prefix_sums, prefix)
+
+                ans = max(ans, cur_best)
+
+                if ans == k:
+                    return k
+
+        return ans

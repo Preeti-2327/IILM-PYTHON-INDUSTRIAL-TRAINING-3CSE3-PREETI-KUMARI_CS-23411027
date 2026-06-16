@@ -1,0 +1,26 @@
+import random
+
+class Solution(object):
+
+    def __init__(self, head):
+        """
+        :type head: ListNode
+        """
+        self.head = head
+
+    def getRandom(self):
+        """
+        :rtype: int
+        """
+        curr = self.head
+        result = curr.val
+        count = 1
+
+        while curr:
+            if random.randint(1, count) == 1:
+                result = curr.val
+
+            curr = curr.next
+            count += 1
+
+        return result

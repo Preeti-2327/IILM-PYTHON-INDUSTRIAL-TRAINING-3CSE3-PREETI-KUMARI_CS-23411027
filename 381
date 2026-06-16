@@ -1,0 +1,48 @@
+import random
+from collections import defaultdict
+
+class RandomizedCollection(object):
+
+    def __init__(self):
+        self.arr = []
+        self.pos = defaultdict(set)
+
+    def insert(self, val):
+        """
+        :type val: int
+        :rtype: bool
+        """
+        not_present = len(self.pos[val]) == 0
+
+        self.arr.append(val)
+        self.pos[val].add(len(self.arr) - 1)
+
+        return not_present
+
+    def remove(self, val):
+        """
+        :type val: int
+        :rtype: bool
+        """
+        if not self.pos[val]:
+            return False
+
+        remove_idx = self.pos[val].pop()
+        last_val = self.arr[-1]
+        last_idx = len(self.arr) - 1
+
+        if remove_idx != last_idx:
+            self.arr[remove_idx] = last_val
+
+            self.pos[last_val].remove(last_idx)
+            self.pos[last_val].add(remove_idx)
+
+        self.arr.pop()
+
+        return True
+
+    def getRandom(self):
+        """
+        :rtype: int
+        """
+        return random.choice(self.arr)

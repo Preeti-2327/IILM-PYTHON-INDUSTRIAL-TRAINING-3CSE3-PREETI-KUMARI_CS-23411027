@@ -1,0 +1,42 @@
+from collections import defaultdict
+
+class Solution(object):
+    def calcEquation(self, equations, values, queries):
+        """
+        :type equations: List[List[str]]
+        :type values: List[float]
+        :type queries: List[List[str]]
+        :rtype: List[float]
+        """
+
+        graph = defaultdict(list)
+
+        for (a, b), val in zip(equations, values):
+            graph[a].append((b, val))
+            graph[b].append((a, 1.0 / val))
+
+        def dfs(curr, target, visited, product):
+            if curr == target:
+                return product
+
+            visited.add(curr)
+
+            for nei, weight in graph[curr]:
+                if nei not in visited:
+                    res = dfs(nei, target, visited, product * weight)
+                    if res != -1.0:
+                        return res
+
+            return -1.0
+
+        ans = []
+
+        for a, b in queries:
+            if a not in graph or b not in graph:
+                ans.append(-1.0)
+            elif a == b:
+                ans.append(1.0)
+            else:
+                ans.append(dfs(a, b, set(), 1.0))
+
+        return ans

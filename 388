@@ -1,0 +1,21 @@
+class Solution(object):
+    def lengthLongestPath(self, input):
+        """
+        :type input: str
+        :rtype: int
+        """
+        max_len = 0
+        
+        # depth -> path length up to that depth
+        path_len = {0: 0}
+        
+        for entry in input.split('\n'):
+            depth = entry.count('\t')
+            name = entry.lstrip('\t')
+            
+            if '.' in name:  # file
+                max_len = max(max_len, path_len[depth] + len(name))
+            else:  # directory
+                path_len[depth + 1] = path_len[depth] + len(name) + 1
+        
+        return max_len

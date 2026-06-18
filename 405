@@ -1,0 +1,18 @@
+class Solution(object):
+    def toHex(self, num):
+        """
+        :type num: int
+        :rtype: str
+        """
+        if num == 0:
+            return "0"
+
+        num &= 0xffffffff
+        hex_chars = "0123456789abcdef"
+        result = []
+
+        while num:
+            result.append(hex_chars[num & 15])
+            num >>= 4
+
+        return "".join(reversed(result))

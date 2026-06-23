@@ -1,0 +1,30 @@
+from collections import Counter
+
+class Solution(object):
+    def originalDigits(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        cnt = Counter(s)
+        digit = [0] * 10
+
+        # Unique letters
+        digit[0] = cnt['z']  # zero
+        digit[2] = cnt['w']  # two
+        digit[4] = cnt['u']  # four
+        digit[6] = cnt['x']  # six
+        digit[8] = cnt['g']  # eight
+
+        # Derived digits
+        digit[3] = cnt['h'] - digit[8]          # three
+        digit[5] = cnt['f'] - digit[4]          # five
+        digit[7] = cnt['s'] - digit[6]          # seven
+        digit[1] = cnt['o'] - digit[0] - digit[2] - digit[4]
+        digit[9] = cnt['i'] - digit[5] - digit[6] - digit[8]
+
+        ans = []
+        for d in range(10):
+            ans.append(str(d) * digit[d])
+
+        return "".join(ans)

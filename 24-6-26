@@ -1,0 +1,65 @@
+class Solution(object):
+    def zigZagArrays(self, n, l, r):
+        MOD = 10**9 + 7
+        m = r - l + 1
+        sz = 2 * m
+
+        # State:
+        # 0..m-1     => up
+        # m..2m-1    => down
+
+        T = [[0] * sz for _ in range(sz)]
+
+        # up[x] <- down[y], y < x
+        for x in range(m):
+            for y in range(x):
+                T[x][m + y] = 1
+
+        # down[x] <- up[y], y > x
+        for x in range(m):
+            for y in range(x + 1, m):
+                T[m + x][y] = 1
+
+        # Length = 2 initial state
+        S = [0] * sz
+
+        for x in range(m):
+            S[x] = x              # up count = values smaller than x
+            S[m + x] = m - 1 - x  # down count = values larger than x
+
+        def mat_mul(A, B):
+            n = len(A)
+            C = [[0] * n for _ in range(n)]
+
+            for i in range(n):
+                for k in range(n):
+                    if A[i][k]:
+                        a = A[i][k]
+                        for j in range(n):
+                            if B[k][j]:
+                                C[i][j] = (C[i][j] + a * B[k][j]) % MOD
+            return C
+
+        def mat_vec_mul(A, v):
+            n = len(A)
+            res = [0] * n
+
+            for i in range(n):
+                s = 0
+                row = A[i]
+                for j in range(n):
+                    if row[j]:
+                        s = (s + row[j] * v[j]) % MOD
+                res[i] = s
+            return res
+
+        p = n - 2
+
+        while p:
+            if p & 1:
+                S = mat_vec_mul(T, S)
+
+            T = mat_mul(T, T)
+            p >>= 1
+
+        return sum(S) % MOD

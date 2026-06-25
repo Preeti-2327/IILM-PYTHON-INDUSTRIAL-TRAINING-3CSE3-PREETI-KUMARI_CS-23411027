@@ -1,0 +1,48 @@
+class Solution(object):
+    def countMajoritySubarrays(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
+        n = len(nums)
+
+        # Transform:
+        # target -> +1
+        # others -> -1
+        pref = [0]
+        s = 0
+        for x in nums:
+            s += 1 if x == target else -1
+            pref.append(s)
+
+        # Coordinate compression
+        vals = sorted(set(pref))
+        rank = {v: i + 1 for i, v in enumerate(vals)}
+
+        m = len(vals)
+        bit = [0] * (m + 1)
+
+        def update(i, delta):
+            while i <= m:
+                bit[i] += delta
+                i += i & -i
+
+        def query(i):
+            res = 0
+            while i > 0:
+                res += bit[i]
+                i -= i & -i
+            return res
+
+        ans = 0
+
+        for p in pref:
+            r = rank[p]
+
+            # Count previous prefix sums strictly smaller than p
+            ans += query(r - 1)
+
+            update(r, 1)
+
+        return ans

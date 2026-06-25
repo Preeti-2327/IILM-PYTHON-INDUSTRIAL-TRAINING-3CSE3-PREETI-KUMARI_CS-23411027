@@ -1,0 +1,17 @@
+class Solution(object):
+    def eraseOverlapIntervals(self, intervals):
+        """
+        :type intervals: List[List[int]]
+        :rtype: int
+        """
+        intervals.sort(key=lambda x: x[1])
+
+        end = float('-inf')
+        kept = 0
+
+        for start, finish in intervals:
+            if start >= end:
+                kept += 1
+                end = finish
+
+        return len(intervals) - kept

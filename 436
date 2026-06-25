@@ -1,0 +1,23 @@
+from bisect import bisect_left
+
+class Solution(object):
+    def findRightInterval(self, intervals):
+        """
+        :type intervals: List[List[int]]
+        :rtype: List[int]
+        """
+        n = len(intervals)
+
+        starts = sorted((interval[0], i) for i, interval in enumerate(intervals))
+
+        start_values = [s for s, _ in starts]
+
+        ans = [-1] * n
+
+        for i, (start, end) in enumerate(intervals):
+            pos = bisect_left(start_values, end)
+
+            if pos < n:
+                ans[i] = starts[pos][1]
+
+        return ans

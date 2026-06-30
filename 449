@@ -1,0 +1,46 @@
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Codec:
+
+    def serialize(self, root):
+        """Encodes a tree to a single string."""
+        preorder = []
+
+        def dfs(node):
+            if not node:
+                return
+            preorder.append(str(node.val))
+            dfs(node.left)
+            dfs(node.right)
+
+        dfs(root)
+        return ",".join(preorder)
+
+    def deserialize(self, data):
+        """Decodes your encoded data to tree."""
+        if not data:
+            return None
+
+        preorder = list(map(int, data.split(",")))
+        self.idx = 0
+
+        def build(lower, upper):
+            if self.idx == len(preorder):
+                return None
+
+            val = preorder[self.idx]
+            if val < lower or val > upper:
+                return None
+
+            self.idx += 1
+            node = TreeNode(val)
+            node.left = build(lower, val)
+            node.right = build(val, upper)
+            return node
+
+        return build(float("-inf"), float("inf"))

@@ -1,0 +1,20 @@
+from collections import defaultdict
+
+class Solution(object):
+    def numberOfArithmeticSlices(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        n = len(nums)
+        dp = [defaultdict(int) for _ in range(n)]
+        ans = 0
+
+        for i in range(n):
+            for j in range(i):
+                diff = nums[i] - nums[j]
+                cnt = dp[j][diff]
+                ans += cnt
+                dp[i][diff] += cnt + 1
+
+        return ans

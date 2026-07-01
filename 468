@@ -1,0 +1,51 @@
+class Solution(object):
+    def validIPAddress(self, queryIP):
+        """
+        :type queryIP: str
+        :rtype: str
+        """
+
+        # Check IPv4
+        if '.' in queryIP:
+            parts = queryIP.split('.')
+
+            if len(parts) != 4:
+                return "Neither"
+
+            for part in parts:
+                if not part:
+                    return "Neither"
+
+                # Leading zeros are not allowed
+                if len(part) > 1 and part[0] == '0':
+                    return "Neither"
+
+                if not part.isdigit():
+                    return "Neither"
+
+                num = int(part)
+                if num < 0 or num > 255:
+                    return "Neither"
+
+            return "IPv4"
+
+        # Check IPv6
+        if ':' in queryIP:
+            parts = queryIP.split(':')
+
+            if len(parts) != 8:
+                return "Neither"
+
+            hexdigits = "0123456789abcdefABCDEF"
+
+            for part in parts:
+                if len(part) == 0 or len(part) > 4:
+                    return "Neither"
+
+                for ch in part:
+                    if ch not in hexdigits:
+                        return "Neither"
+
+            return "IPv6"
+
+        return "Neither"

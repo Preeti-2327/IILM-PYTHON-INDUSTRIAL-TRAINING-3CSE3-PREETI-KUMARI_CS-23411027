@@ -1,0 +1,48 @@
+class Solution(object):
+    def circularArrayLoop(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: bool
+        """
+        n = len(nums)
+
+        def next_index(i):
+            return (i + nums[i]) % n
+
+        for i in range(n):
+            if nums[i] == 0:
+                continue
+
+            direction = nums[i] > 0
+            slow = fast = i
+
+            while True:
+                # Move slow one step
+                if nums[slow] == 0 or (nums[slow] > 0) != direction:
+                    break
+                slow = next_index(slow)
+
+                # Move fast first step
+                if nums[fast] == 0 or (nums[fast] > 0) != direction:
+                    break
+                fast = next_index(fast)
+
+                # Move fast second step
+                if nums[fast] == 0 or (nums[fast] > 0) != direction:
+                    break
+                fast = next_index(fast)
+
+                if slow == fast:
+                    # Cycle of length 1 is invalid
+                    if slow == next_index(slow):
+                        break
+                    return True
+
+            # Mark all nodes in this traversal as visited
+            curr = i
+            while nums[curr] != 0 and (nums[curr] > 0) == direction:
+                nxt = next_index(curr)
+                nums[curr] = 0
+                curr = nxt
+
+        return False

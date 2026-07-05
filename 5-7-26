@@ -1,0 +1,51 @@
+class Solution(object):
+    def pathsWithMaxScore(self, board):
+        MOD = 10**9 + 7
+        n = len(board)
+
+        # dp[i][j] = (max_score, ways)
+        dp = [[(-1, 0) for _ in range(n)] for _ in range(n)]
+
+        def val(c):
+            return int(c) if c.isdigit() else 0
+
+        # start from 'S' at bottom-right
+        dp[n-1][n-1] = (0, 1)
+
+        # fill from bottom-right to top-left
+        for i in range(n-1, -1, -1):
+            for j in range(n-1, -1, -1):
+
+                if board[i][j] == 'X':
+                    continue
+
+                if i == n-1 and j == n-1:
+                    continue
+
+                best_score = -1
+                ways = 0
+
+                # check 3 possible previous positions
+                for di, dj in [(1, 0), (0, 1), (1, 1)]:
+                    ni, nj = i + di, j + dj
+                    if ni >= n or nj >= n:
+                        continue
+                    if board[ni][nj] == 'X':
+                        continue
+
+                    score, cnt = dp[ni][nj]
+                    if score == -1:
+                        continue
+
+                    if score > best_score:
+                        best_score = score
+                        ways = cnt
+                    elif score == best_score:
+                        ways = (ways + cnt) % MOD
+
+                if best_score == -1:
+                    dp[i][j] = (-1, 0)
+                else:
+                    dp[i][j] = (best_score + val(board[i][j]), ways % MOD)
+
+        return [0, 0] if dp[0][0][0] == -1 else list(dp[0][0])

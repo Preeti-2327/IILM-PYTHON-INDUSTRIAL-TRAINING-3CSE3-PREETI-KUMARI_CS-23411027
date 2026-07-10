@@ -1,0 +1,26 @@
+class Solution(object):
+    def magicalString(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+        if n <= 3:
+            return 1
+
+        s = [1, 2, 2]
+        head = 2
+        num = 1
+        count = 1
+
+        while len(s) < n:
+            times = s[head]
+
+            for _ in range(times):
+                s.append(num)
+                if num == 1 and len(s) <= n:
+                    count += 1
+
+            num = 3 - num
+            head += 1
+
+        return count

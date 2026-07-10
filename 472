@@ -1,0 +1,32 @@
+class Solution(object):
+    def findAllConcatenatedWordsInADict(self, words):
+        """
+        :type words: List[str]
+        :rtype: List[str]
+        """
+        words.sort(key=len)
+        wordSet = set()
+        ans = []
+
+        for word in words:
+            if not word:
+                continue
+
+            m = len(word)
+            dp = [False] * (m + 1)
+            dp[0] = True
+
+            for i in range(1, m + 1):
+                for j in range(i):
+                    if not dp[j]:
+                        continue
+                    if word[j:i] in wordSet:
+                        dp[i] = True
+                        break
+
+            if dp[m]:
+                ans.append(word)
+
+            wordSet.add(word)
+
+        return ans

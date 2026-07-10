@@ -1,0 +1,72 @@
+from collections import Counter
+from functools import lru_cache
+
+class Solution(object):
+    def findMinStep(self, board, hand):
+        """
+        :type board: str
+        :type hand: str
+        :rtype: int
+        """
+
+        def shrink(s):
+            changed = True
+            while changed:
+                changed = False
+                i = 0
+                res = ""
+                while i < len(s):
+                    j = i
+                    while j < len(s) and s[j] == s[i]:
+                        j += 1
+                    if j - i >= 3:
+                        changed = True
+                    else:
+                        res += s[i:j]
+                    i = j
+                s = res
+            return s
+
+        cnt = Counter(hand)
+
+        @lru_cache(None)
+        def dfs(cur, state):
+            cur = shrink(cur)
+            if not cur:
+                return 0
+
+            handCnt = Counter()
+            for c, v in zip("RYBGW", state):
+                handCnt[c] = v
+
+            ans = float("inf")
+            i = 0
+
+            while i < len(cur):
+                j = i
+                while j < len(cur) and cur[j] == cur[i]:
+                    j += 1
+
+                need = 3 - (j - i)
+                if handCnt[cur[i]] >= need > 0:
+                    handCnt[cur[i]] -= need
+                    nxt = cur[:i] + cur[j:]
+                    newState = tuple(handCnt[c] for c in "RYBGW")
+                    tmp = dfs(nxt, newState)
+                    if tmp != float("inf"):
+                        ans = min(ans, tmp + need)
+                    handCnt[cur[i]] += need
+
+                elif need <= 0:
+                    nxt = cur[:i] + cur[j:]
+                    tmp = dfs(nxt, state)
+                    if tmp != float("inf"):
+                        ans = min(ans, tmp)
+
+                i = j
+
+            return ans
+
+        state = tuple(cnt[c] for c in "RYBGW")
+        ans = dfs(board, state)
+        return -1 if ans == float("inf") else ans

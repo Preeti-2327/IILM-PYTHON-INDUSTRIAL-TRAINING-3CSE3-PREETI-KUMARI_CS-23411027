@@ -1,0 +1,30 @@
+from collections import deque
+
+class Solution(object):
+    def largestValues(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
+        if not root:
+            return []
+
+        ans = []
+        q = deque([root])
+
+        while q:
+            size = len(q)
+            mx = float('-inf')
+
+            for _ in range(size):
+                node = q.popleft()
+                mx = max(mx, node.val)
+
+                if node.left:
+                    q.append(node.left)
+                if node.right:
+                    q.append(node.right)
+
+            ans.append(mx)
+
+        return ans

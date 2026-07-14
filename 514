@@ -1,0 +1,36 @@
+class Solution(object):
+    def findRotateSteps(self, ring, key):
+        """
+        :type ring: str
+        :type key: str
+        :rtype: int
+        """
+        n = len(ring)
+
+        # Store positions of each character
+        pos = {}
+        for i, ch in enumerate(ring):
+            if ch not in pos:
+                pos[ch] = []
+            pos[ch].append(i)
+
+        memo = {}
+
+        def dfs(i, cur):
+            if i == len(key):
+                return 0
+
+            if (i, cur) in memo:
+                return memo[(i, cur)]
+
+            ans = float('inf')
+
+            for nxt in pos[key[i]]:
+                dist = abs(nxt - cur)
+                step = min(dist, n - dist)
+                ans = min(ans, step + 1 + dfs(i + 1, nxt))
+
+            memo[(i, cur)] = ans
+            return ans
+
+        return dfs(0, 0)

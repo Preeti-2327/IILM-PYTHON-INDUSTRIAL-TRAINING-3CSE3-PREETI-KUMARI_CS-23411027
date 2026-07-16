@@ -1,0 +1,26 @@
+class Solution(object):
+    def findLUSlength(self, strs):
+        """
+        :type strs: List[str]
+        :rtype: int
+        """
+        def isSubsequence(a, b):
+            i = j = 0
+            while i < len(a) and j < len(b):
+                if a[i] == b[j]:
+                    i += 1
+                j += 1
+            return i == len(a)
+
+        ans = -1
+
+        for i in range(len(strs)):
+            ok = True
+            for j in range(len(strs)):
+                if i != j and isSubsequence(strs[i], strs[j]):
+                    ok = False
+                    break
+            if ok:
+                ans = max(ans, len(strs[i]))
+
+        return ans

@@ -1,0 +1,21 @@
+class Solution(object):
+    def checkSubarraySum(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: bool
+        """
+        rem = {0: -1}
+        prefix = 0
+
+        for i, num in enumerate(nums):
+            prefix += num
+            r = prefix % k
+
+            if r in rem:
+                if i - rem[r] >= 2:
+                    return True
+            else:
+                rem[r] = i
+
+        return False

@@ -1,0 +1,30 @@
+class Codec:
+
+    def __init__(self):
+        self.url_to_id = {}
+        self.id_to_url = {}
+        self.id = 0
+
+    def encode(self, longUrl):
+        """
+        :type longUrl: str
+        :rtype: str
+        """
+        if longUrl not in self.url_to_id:
+            self.url_to_id[longUrl] = self.id
+            self.id_to_url[self.id] = longUrl
+            self.id += 1
+
+        return "http://tinyurl.com/" + str(self.url_to_id[longUrl])
+
+    def decode(self, shortUrl):
+        """
+        :type shortUrl: str
+        :rtype: str
+        """
+        idx = int(shortUrl.split("/")[-1])
+        return self.id_to_url[idx]
+
+# Your Codec object will be instantiated and called as such:
+# codec = Codec()
+# codec.decode(codec.encode(url))

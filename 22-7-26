@@ -1,0 +1,35 @@
+class Solution(object):
+    def maxActiveSectionsAfterTrade(self, s, queries):
+        """
+        :type s: str
+        :type queries: List[List[int]]
+        :rtype: List[int]
+        """
+        ans = []
+
+        for l, r in queries:
+            sub = s[l:r + 1]
+            ones = sub.count('1')
+
+            t = '1' + sub + '1'
+
+            runs = []
+            i = 0
+            while i < len(t):
+                j = i
+                while j < len(t) and t[j] == t[i]:
+                    j += 1
+                runs.append((t[i], j - i))
+                i = j
+
+            best = ones
+
+            for i in range(2, len(runs) - 2):
+                if (runs[i][0] == '1' and
+                    runs[i - 1][0] == '0' and
+                    runs[i + 1][0] == '0'):
+                    best = max(best, ones + runs[i - 1][1] + runs[i + 1][1])
+
+            ans.append(best)
+
+        return ans

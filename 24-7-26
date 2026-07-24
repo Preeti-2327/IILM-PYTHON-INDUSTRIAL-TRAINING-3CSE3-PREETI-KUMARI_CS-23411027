@@ -1,0 +1,25 @@
+class Solution(object):
+    def uniqueXorTriplets(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        MAXX = 2048
+
+        # XORs of pairs (allowing i == j)
+        pair = [False] * MAXX
+        n = len(nums)
+
+        for i in range(n):
+            for j in range(i, n):
+                pair[nums[i] ^ nums[j]] = True
+
+        # XORs of triplets
+        ans = [False] * MAXX
+
+        for x in range(MAXX):
+            if pair[x]:
+                for v in nums:
+                    ans[x ^ v] = True
+
+        return sum(ans)

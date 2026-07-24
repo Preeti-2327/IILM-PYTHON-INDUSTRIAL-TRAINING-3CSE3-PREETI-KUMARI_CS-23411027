@@ -1,0 +1,34 @@
+class Solution(object):
+    def removeBoxes(self, boxes):
+        """
+        :type boxes: List[int]
+        :rtype: int
+        """
+        memo = {}
+
+        def dp(l, r, k):
+            if l > r:
+                return 0
+
+            if (l, r, k) in memo:
+                return memo[(l, r, k)]
+
+            # Merge consecutive same-colored boxes at the end
+            while l < r and boxes[r] == boxes[r - 1]:
+                r -= 1
+                k += 1
+
+            # Remove the last group directly
+            ans = dp(l, r - 1, 0) + (k + 1) * (k + 1)
+
+            # Try merging boxes[r] with a same-colored box earlier
+            for i in range(l, r):
+                if boxes[i] == boxes[r]:
+                    ans = max(ans,
+                              dp(l, i, k + 1) +
+                              dp(i + 1, r - 1, 0))
+
+            memo[(l, r, k)] = ans
+            return ans
+
+        return dp(0, len(boxes) - 1, 0)

@@ -1,0 +1,61 @@
+class Solution(object):
+    def kthPalindrome(self, s, k):
+        """
+        :type s: str
+        :type k: int
+        :rtype: str
+        """
+        from math import factorial
+
+        # Count frequencies
+        cnt = [0] * 26
+        for ch in s:
+            cnt[ord(ch) - ord('a')] += 1
+
+        # Middle character (if any)
+        mid = ""
+        half = []
+        halfCnt = [0] * 26
+        m = 0
+
+        for i in range(26):
+            if cnt[i] % 2:
+                mid = chr(i + ord('a'))
+            halfCnt[i] = cnt[i] // 2
+            m += halfCnt[i]
+
+        # Precompute factorials (capped)
+        LIMIT = 10 ** 6 + 1
+        fact = [1] * (m + 1)
+        for i in range(1, m + 1):
+            fact[i] = min(LIMIT, fact[i - 1] * i)
+
+        def ways(freq):
+            total = sum(freq)
+            res = fact[total]
+            for x in freq:
+                res //= fact[x]
+            return min(res, LIMIT)
+
+        if ways(halfCnt) < k:
+            return ""
+
+        left = []
+
+        for pos in range(m):
+            for c in range(26):
+                if halfCnt[c] == 0:
+                    continue
+
+                halfCnt[c] -= 1
+                w = ways(halfCnt)
+
+                if w >= k:
+                    left.append(chr(c + ord('a')))
+                    break
+                else:
+                    k -= w
+                    halfCnt[c] += 1
+
+        left = "".join(left)
+        return left + mid + left[::-1]

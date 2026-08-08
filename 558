@@ -1,0 +1,66 @@
+class Solution(object):
+    def intersect(self, quadTree1, quadTree2):
+        """
+        :type quadTree1: Node
+        :type quadTree2: Node
+        :rtype: Node
+        """
+
+        # If either region is completely 1,
+        # OR result is completely 1.
+        if quadTree1.isLeaf and quadTree1.val:
+            return quadTree1
+
+        if quadTree2.isLeaf and quadTree2.val:
+            return quadTree2
+
+        # If quadTree1 is a leaf 0,
+        # result is quadTree2.
+        if quadTree1.isLeaf:
+            return quadTree2
+
+        # If quadTree2 is a leaf 0,
+        # result is quadTree1.
+        if quadTree2.isLeaf:
+            return quadTree1
+
+        # Both are internal nodes.
+        topLeft = self.intersect(
+            quadTree1.topLeft,
+            quadTree2.topLeft
+        )
+
+        topRight = self.intersect(
+            quadTree1.topRight,
+            quadTree2.topRight
+        )
+
+        bottomLeft = self.intersect(
+            quadTree1.bottomLeft,
+            quadTree2.bottomLeft
+        )
+
+        bottomRight = self.intersect(
+            quadTree1.bottomRight,
+            quadTree2.bottomRight
+        )
+
+        # If all four children are the same leaf,
+        # merge them into one leaf.
+        if (topLeft.isLeaf and
+            topRight.isLeaf and
+            bottomLeft.isLeaf and
+            bottomRight.isLeaf and
+            topLeft.val == topRight.val == bottomLeft.val == bottomRight.val):
+
+            return Node(topLeft.val, True, None, None, None, None)
+
+        # Otherwise create an internal node.
+        return Node(
+            True,
+            False,
+            topLeft,
+            topRight,
+            bottomLeft,
+            bottomRight
+        )

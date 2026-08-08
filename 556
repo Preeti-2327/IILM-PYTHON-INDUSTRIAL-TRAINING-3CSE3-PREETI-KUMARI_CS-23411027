@@ -1,0 +1,38 @@
+class Solution(object):
+    def nextGreaterElement(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+        digits = list(str(n))
+        length = len(digits)
+
+        # 1. Find the first decreasing digit from the right
+        i = length - 2
+
+        while i >= 0 and digits[i] >= digits[i + 1]:
+            i -= 1
+
+        # No greater permutation exists
+        if i < 0:
+            return -1
+
+        # 2. Find the smallest digit greater than digits[i]
+        j = length - 1
+
+        while digits[j] <= digits[i]:
+            j -= 1
+
+        # 3. Swap
+        digits[i], digits[j] = digits[j], digits[i]
+
+        # 4. Reverse the part after i
+        digits[i + 1:] = reversed(digits[i + 1:])
+
+        ans = int(''.join(digits))
+
+        # Must fit in signed 32-bit integer
+        if ans > 2**31 - 1:
+            return -1
+
+        return ans

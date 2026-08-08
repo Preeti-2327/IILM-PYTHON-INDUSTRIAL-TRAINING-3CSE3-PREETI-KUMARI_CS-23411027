@@ -1,0 +1,124 @@
+from bisect import bisect_left
+
+class Solution(object):
+    def validSequence(self, word1, word2):
+        """
+        :type word1: str
+        :type word2: str
+        :rtype: List[int]
+        """
+        n = len(word1)
+        m = len(word2)
+
+        # Store positions of every character in word1
+        pos = [[] for _ in range(26)]
+
+        for i, ch in enumerate(word1):
+            pos[ord(ch) - ord('a')].append(i)
+
+        # exact[j] = latest possible index of word2[j]
+        # such that word2[j:] can be matched exactly.
+        exact = [-1] * (m + 1)
+        exact[m] = n
+
+        p = n - 1
+
+        for j in range(m - 1, -1, -1):
+            arr = pos[ord(word2[j]) - ord('a')]
+
+            k = bisect_left(arr, p + 1) - 1
+
+            if k < 0:
+                break
+
+            exact[j] = arr[k]
+            p = exact[j] - 1
+
+        # run_start[i] = start of the consecutive run
+        # containing word1[i].
+        run_start = [0] * n
+
+        for i in range(1, n):
+            if word1[i] == word1[i - 1]:
+                run_start[i] = run_start[i - 1]
+            else:
+                run_start[i] = i
+
+        # one[j] = latest possible index for word2[j]
+        # if word2[j:] can be matched with at most ONE mismatch.
+        one = [-1] * (m + 1)
+        one[m] = n
+
+        for j in range(m - 1, -1, -1):
+            ch = word2[j]
+            best = -1
+
+            # Case 1:
+            # Match current character exactly and use
+            # the mismatch somewhere later.
+            limit = one[j + 1]
+
+            if limit > 0:
+                arr = pos[ord(ch) - ord('a')]
+                k = bisect_left(arr, limit) - 1
+
+                if k >= 0:
+                    best = arr[k]
+
+            # Case 2:
+            # Use the mismatch on the current character,
+            # then match the rest exactly.
+            limit = exact[j + 1]
+
+            if limit > 0:
+                i = limit - 1
+
+                # Find the latest character before limit
+                # that is different from ch.
+                if word1[i] == ch:
+                    i = run_start[i] - 1
+
+                if i >= 0:
+                    best = max(best, i)
+
+            one[j] = best
+
+        # Greedily choose the smallest possible indices.
+        ans = []
+        j = 0
+        used_mismatch = False
+
+        for i in range(n):
+            if j == m:
+                break
+
+            # Current character matches exactly
+            if word1[i] == word2[j]:
+
+                if used_mismatch:
+                    # Mismatch already used, so remaining part
+                    # must match exactly.
+                    if exact[j + 1] > i:
+                        ans.append(i)
+                        j += 1
+
+                else:
+                    # We can either match everything exactly,
+                    # or use our mismatch later.
+                    if one[j + 1] > i:
+                        ans.append(i)
+                        j += 1
+
+            # Current character doesn't match.
+            # We can use our one mismatch here.
+            elif not used_mismatch:
+
+                if exact[j + 1] > i:
+                    ans.append(i)
+                    j += 1
+                    used_mismatch = True
+
+        if j == m:
+            return ans
+
+        return []

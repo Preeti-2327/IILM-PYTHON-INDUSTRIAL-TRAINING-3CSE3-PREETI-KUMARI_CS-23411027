@@ -1,0 +1,24 @@
+class Solution(object):
+    def findTilt(self, root):
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
+        self.ans = 0
+
+        def dfs(node):
+            if node is None:
+                return 0
+
+            left_sum = dfs(node.left)
+            right_sum = dfs(node.right)
+
+            # Tilt of current node
+            self.ans += abs(left_sum - right_sum)
+
+            # Return sum of current subtree
+            return left_sum + right_sum + node.val
+
+        dfs(root)
+
+        return self.ans

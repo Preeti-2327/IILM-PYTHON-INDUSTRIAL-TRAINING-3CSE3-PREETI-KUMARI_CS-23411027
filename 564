@@ -1,0 +1,48 @@
+class Solution(object):
+    def nearestPalindromic(self, n):
+        """
+        :type n: str
+        :rtype: str
+        """
+        length = len(n)
+        num = int(n)
+
+        candidates = set()
+
+        # Special boundary candidates
+        candidates.add(10 ** (length - 1) - 1)
+        candidates.add(10 ** length + 1)
+
+        # Take the first half of n
+        half_len = (length + 1) // 2
+        prefix = int(n[:half_len])
+
+        # Try prefix - 1, prefix, prefix + 1
+        for p in [prefix - 1, prefix, prefix + 1]:
+
+            s = str(p)
+
+            if length % 2 == 0:
+                palindrome = s + s[::-1]
+            else:
+                palindrome = s + s[-2::-1]
+
+            candidates.add(int(palindrome))
+
+        # n itself cannot be the answer
+        candidates.discard(num)
+
+        # Find closest palindrome
+        ans = None
+
+        for x in candidates:
+            if ans is None:
+                ans = x
+            else:
+                diff1 = abs(x - num)
+                diff2 = abs(ans - num)
+
+                if diff1 < diff2 or (diff1 == diff2 and x < ans):
+                    ans = x
+
+        return str(ans)

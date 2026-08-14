@@ -1,0 +1,236 @@
+import java.util.Scanner;
+import java.util.Stack;
+
+public class main {
+
+    static class Node {
+        int data;
+        Node left;
+        Node right;
+
+        Node(int data) {
+            this.data = data;
+            this.left = null;
+            this.right = null;
+        }
+    }
+
+    // Insert node
+    static Node insert(Node root, int data) {
+        if (root == null) {
+            return new Node(data);
+        }
+
+        if (data < root.data) {
+            root.left = insert(root.left, data);
+        } else if (data > root.data) {
+            root.right = insert(root.right, data);
+        }
+
+        return root;
+    }
+
+    // Search node
+    static boolean search(Node root, int key) {
+        if (root == null) {
+            return false;
+        }
+
+        if (root.data == key) {
+            return true;
+        }
+
+        if (key < root.data) {
+            return search(root.left, key);
+        } else {
+            return search(root.right, key);
+        }
+    }
+
+    // Find minimum element
+    static int findMin(Node root) {
+        if (root == null) {
+            return -1;
+        }
+
+        while (root.left != null) {
+            root = root.left;
+        }
+
+        return root.data;
+    }
+
+    // Delete node
+    static Node delete(Node root, int key) {
+        if (root == null) {
+            return null;
+        }
+
+        if (key < root.data) {
+            root.left = delete(root.left, key);
+        } else if (key > root.data) {
+            root.right = delete(root.right, key);
+        } else {
+
+            // No child
+            if (root.left == null && root.right == null) {
+                return null;
+            }
+
+            // Only right child
+            if (root.left == null) {
+                return root.right;
+            }
+
+            // Only left child
+            if (root.right == null) {
+                return root.left;
+            }
+
+            // Two children
+            root.data = findMin(root.right);
+            root.right = delete(root.right, root.data);
+        }
+
+        return root;
+    }
+
+    // Check valid BST
+    static boolean isValidBST(Node root) {
+        return validate(root, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+
+    static boolean validate(Node root, long min, long max) {
+        if (root == null) {
+            return true;
+        }
+
+        if (root.data <= min || root.data >= max) {
+            return false;
+        }
+
+        if (!validate(root.left, min, root.data)) {
+            return false;
+        }
+
+        if (!validate(root.right, root.data, max)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // Kth smallest
+    static int kthSmallest(Node root, int k) {
+        Stack<Node> stack = new Stack<>();
+        Node current = root;
+
+        while (current != null || !stack.isEmpty()) {
+
+            while (current != null) {
+                stack.push(current);
+                current = current.left;
+            }
+
+            current = stack.pop();
+            k--;
+
+            if (k == 0) {
+                return current.data;
+            }
+
+            current = current.right;
+        }
+
+        return -1;
+    }
+
+    // Kth largest
+    static int kthLargest(Node root, int k) {
+        Stack<Node> stack = new Stack<>();
+        Node current = root;
+
+        while (current != null || !stack.isEmpty()) {
+
+            while (current != null) {
+                stack.push(current);
+                current = current.right;
+            }
+
+            current = stack.pop();
+            k--;
+
+            if (k == 0) {
+                return current.data;
+            }
+
+            current = current.left;
+        }
+
+        return -1;
+    }
+
+    public static void main(String[] args) {
+
+        Node root = null;
+
+        root = insert(root, 50);
+        root = insert(root, 30);
+        root = insert(root, 70);
+        root = insert(root, 20);
+        root = insert(root, 40);
+        root = insert(root, 60);
+        root = insert(root, 80);
+
+        Scanner sc = new Scanner(System.in);
+
+        // Search
+        System.out.print("Enter value to search: ");
+        int key = sc.nextInt();
+
+        if (search(root, key)) {
+            System.out.println(key + " found in BST");
+        } else {
+            System.out.println(key + " not found in BST");
+        }
+
+        // Minimum
+        System.out.println("Minimum element: " + findMin(root));
+
+        // Delete
+        System.out.print("Enter value to delete: ");
+        int deleteValue = sc.nextInt();
+
+        root = delete(root, deleteValue);
+        System.out.println(deleteValue + " deleted");
+
+        // Check valid BST
+        if (isValidBST(root)) {
+            System.out.println("Valid BST");
+        } else {
+            System.out.println("Invalid BST");
+        }
+
+        // Kth smallest
+        System.out.print("Enter k for kth smallest: ");
+        int k1 = sc.nextInt();
+
+        int smallest = kthSmallest(root, k1);
+
+        if (smallest == -1) {
+            System.out.println("Invalid k");
+        } else {
+            System.out.println(k1 + "th smallest element: " + smallest);
+        }
+      // Kth largest
+        System.out.print("Enter k for kth largest: ");
+        int k2 = sc.nextInt();
+        int largest = kthLargest(root, k2);
+        if (largest == -1) {
+            System.out.println("Invalid k");
+        } else {
+            System.out.println(k2 + "th largest element: " + largest);
+        }
+        sc.close();
+    }
+}

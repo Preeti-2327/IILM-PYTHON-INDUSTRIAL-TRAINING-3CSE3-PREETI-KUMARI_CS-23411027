@@ -1,0 +1,52 @@
+class Solution(object):
+    def stoneGameV(self, stoneValue):
+        """
+        :type stoneValue: List[int]
+        :rtype: int
+        """
+        n = len(stoneValue)
+
+        # Prefix sum for quickly finding range sums
+        prefix = [0] * (n + 1)
+
+        for i in range(n):
+            prefix[i + 1] = prefix[i] + stoneValue[i]
+
+        def get_sum(l, r):
+            return prefix[r + 1] - prefix[l]
+
+        # dp[l][r] = maximum score from stoneValue[l...r]
+        dp = [[0] * n for _ in range(n)]
+
+        # Length of the interval
+        for length in range(2, n + 1):
+
+            for l in range(n - length + 1):
+                r = l + length - 1
+
+                # Try every possible split
+                for mid in range(l, r):
+
+                    left_sum = get_sum(l, mid)
+                    right_sum = get_sum(mid + 1, r)
+
+                    if left_sum < right_sum:
+                        dp[l][r] = max(
+                            dp[l][r],
+                            left_sum + dp[l][mid]
+                        )
+
+                    elif left_sum > right_sum:
+                        dp[l][r] = max(
+                            dp[l][r],
+                            right_sum + dp[mid + 1][r]
+                        )
+
+                    else:
+                        dp[l][r] = max(
+                            dp[l][r],
+                            left_sum + dp[l][mid],
+                            right_sum + dp[mid + 1][r]
+                        )
+
+        return dp[0][n - 1]
